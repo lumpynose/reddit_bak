@@ -20,14 +20,7 @@ public class TestGetMethodFriends {
 
     @Test
     public void testGetMethod() throws IOException, InterruptedException {
-        final var client = new HttpClientRedditOAuth();
-
-        final var authResponse = client.getAuthToken();
-
-        log.debug("auth response status: {}",
-                Integer.valueOf(authResponse.statusCode()));
-        log.debug("auth response headers: {}", authResponse.headers());
-        log.debug("auth response body: {}", authResponse.body());
+        final var client = new RedditGetMethod();
 
         final var params = Map.of("limit", "5");
 
@@ -41,17 +34,14 @@ public class TestGetMethodFriends {
 
         decodeBody(methodResponse.body(), client);
 
-        final var revokeResponse = client.revokeToken();
+        final var redditOAuth = new RedditOAuth();
 
-        log.debug("revoke response status: {}",
-                Integer.valueOf(revokeResponse.statusCode()));
-        log.debug("revoke response headers: {}", revokeResponse.headers());
-        log.debug("revoke response body: {}", revokeResponse.body());
+        redditOAuth.revokeToken();
     }
 
     @SuppressWarnings("boxing")
     private void decodeBody(final String body,
-            final HttpClientRedditOAuth client)
+            final RedditGetMethod client)
             throws IOException, InterruptedException {
         final var gson = new Gson();
 
@@ -112,7 +102,8 @@ public class TestGetMethodFriends {
         }
     }
 
-    private void testBanned(final HttpClientRedditOAuth client,
+    @SuppressWarnings("boxing")
+    private void testBanned(final RedditGetMethod client,
             final Gson gson) throws IOException, InterruptedException {
         final var userNmae = "ECUlightBBC";
 
@@ -150,7 +141,7 @@ public class TestGetMethodFriends {
 
     }
 
-    @SuppressWarnings("unused")
+    @SuppressWarnings({ "unused", "boxing" })
     private void extracted(final List<Friends> data) throws IOException {
         Collections.sort(data.get(0).getData().getFriendsList(),
                 Collections.reverseOrder());

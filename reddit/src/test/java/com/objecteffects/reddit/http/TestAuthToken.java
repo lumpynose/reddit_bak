@@ -15,16 +15,11 @@ public class TestAuthToken {
     @Test
     public void testGetAuthToken() throws IOException, InterruptedException {
 
-        final var client = new HttpClientRedditOAuth();
+        final var client = new RedditOAuth();
 
-        final var response = client.getAuthToken();
+        client.getAuthToken();
 
-        log.debug("response status: {}",
-                Integer.valueOf(response.statusCode()));
-        log.debug("response headers: {}", response.headers());
-        log.debug("response body: {}", response.body());
-
-        final var access_token = Configuration.getOauthToken();
+        final var access_token = Configuration.getOAuthToken();
 
         log.debug("access_token: {}", access_token);
     }

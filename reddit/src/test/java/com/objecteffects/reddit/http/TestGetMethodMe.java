@@ -13,28 +13,12 @@ public class TestGetMethodMe {
 
     @Test
     public void testGetMethod() throws IOException, InterruptedException {
-        final var client = new HttpClientRedditOAuth();
+        final var client = new RedditGetMethod();
 
-        final var authResponse = client.getAuthToken();
+        client.getMethod("api/v1/me", Collections.emptyMap());
 
-        log.debug("auth response status: {}",
-                Integer.valueOf(authResponse.statusCode()));
-        log.debug("auth response headers: {}", authResponse.headers());
-        log.debug("auth response body: {}", authResponse.body());
+        final var redditOAuth = new RedditOAuth();
 
-        final var methodResponse = client
-                .getMethod("api/v1/me", Collections.emptyMap());
-
-        log.debug("method response status: {}",
-                Integer.valueOf(methodResponse.statusCode()));
-        log.debug("method response headers: {}", methodResponse.headers());
-        log.debug("method response body: {}", methodResponse.body());
-
-        final var revokeResponse = client.revokeToken();
-
-        log.debug("revoke response status: {}",
-                Integer.valueOf(revokeResponse.statusCode()));
-        log.debug("revoke response headers: {}", revokeResponse.headers());
-        log.debug("revoke response body: {}", revokeResponse.body());
+        redditOAuth.revokeToken();
     }
 }

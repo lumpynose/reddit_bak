@@ -15,7 +15,7 @@ public class TestRevokeToken {
     @Test
     public void testRevokeToken()
             throws IOException, InterruptedException {
-        final var client = new HttpClientRedditOAuth();
+        final var client = new RedditOAuth();
 
         final var response = client.revokeToken();
 

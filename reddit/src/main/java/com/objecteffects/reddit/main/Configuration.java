@@ -74,11 +74,11 @@ public class Configuration {
         return secret;
     }
 
-    public static String getOauthToken() {
+    public static String getOAuthToken() {
         return oauthToken;
     }
 
-    public static void setOauthToken(final String _oauthToken) {
+    public static void setOAuthToken(final String _oauthToken) {
         oauthToken = _oauthToken;
     }
 
