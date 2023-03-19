@@ -3,6 +3,7 @@ package com.objecteffects.reddit.http;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -13,6 +14,7 @@ import org.junit.jupiter.api.Test;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.objecteffects.reddit.http.Friends.Friend;
 
 public class TestGetMethodFriends {
     private final static Logger log = LogManager
@@ -22,7 +24,7 @@ public class TestGetMethodFriends {
     public void testGetMethod() throws IOException, InterruptedException {
         final var client = new RedditGetMethod();
 
-        final var params = Map.of("limit", "5");
+        final var params = Map.of("limit", "15");
 
         final var methodResponse = client
                 .getMethod("prefs/friends", params);
@@ -34,9 +36,7 @@ public class TestGetMethodFriends {
 
         decodeBody(methodResponse.body(), client);
 
-        final var redditOAuth = new RedditOAuth();
-
-        redditOAuth.revokeToken();
+        RedditOAuth.revokeToken();
     }
 
     @SuppressWarnings("boxing")
@@ -54,16 +54,12 @@ public class TestGetMethodFriends {
         log.debug("data length: {}",
                 data.get(0).getData().getFriendsList().size());
 
-        testBanned(client, gson);
+        final List<Friend> nullList = new ArrayList<>();
+        final List<Friend> suspendList = new ArrayList<>();
+        final List<Friend> karmaList = new ArrayList<>();
 
-        var i = 0;
-
-        for (final var f : data.get(0).getData().getFriendsList()) {
-            if (i++ >= 0) {
-                break;
-            }
-
-//            log.debug("{}", f.getName());
+        for (final Friend f : data.get(0).getData().getFriendsList()) {
+            log.debug("{}", f.getName());
 
             final var aboutMethod = String.format("user/%s/about",
                     f.getName());
@@ -71,10 +67,18 @@ public class TestGetMethodFriends {
             final var aboutMethodResponse = client
                     .getMethod(aboutMethod, Collections.emptyMap());
 
+            if (aboutMethodResponse == null) {
+                nullList.add(f);
+
+                continue;
+            }
+
 //            log.debug("about response body: {}", aboutMethodResponse.body());
 
-            final var fabout = gson.fromJson(aboutMethodResponse.body(),
+            final FriendAbout fabout = gson.fromJson(aboutMethodResponse.body(),
                     FriendAbout.class);
+
+//            log.debug("friend about: {}", fabout);
 
             if (fabout.getData() == null) {
                 log.debug("{}: no about data", f.getName());
@@ -85,24 +89,68 @@ public class TestGetMethodFriends {
                 f.setKarma(fabout.getData().getTotalKarma());
             }
 
-            final var overviewMethod = String.format("user/%s/overview",
-                    f.getName());
+            if (fabout.getData().getIsSuspended()) {
+                log.debug("{}: suspended", f.getName());
 
-            final var overviewMethodResponse = client
-                    .getMethod(overviewMethod, Collections.emptyMap());
+                suspendList.add(f);
 
-            log.debug("overview response body: {}",
-                    overviewMethodResponse.body());
+                continue;
+            }
 
-            log.debug("{}, total karma: {}", f.getName(), f.getKarma());
+            if (f.getKarma() == 0) {
+                karmaList.add(f);
+            }
 
-//             Thread.sleep(1000);
+//            log.debug("{}, total karma: {}", f.getName(), f.getKarma());
 
-//            extracted(data);
+            Thread.sleep(1005);
+        }
+
+        printList("null", nullList);
+        printList("suspended", suspendList);
+        printList("zero karma", karmaList);
+
+//      extracted(data);
+    }
+
+    private void printList(final String label, final List<Friend> list)
+            throws IOException {
+        final var fileName = "d:/tmp/duds.txt";
+
+        Collections.sort(list, Collections.reverseOrder());
+
+        try (var writer = new PrintWriter(new FileWriter(fileName, true))) {
+            writer.println(label);
+
+            for (final var f : list) {
+                final var line = String.format("%s, %s", f.getName(),
+                        Integer.valueOf(f.getKarma()));
+
+                log.debug(line);
+
+                writer.println(line);
+
+                if (f.getKarma() == 0) {
+                    final var delClient = new RedditDeleteMethod();
+
+                    final var deleteMethod = String
+                            .format("api/v1/me/friends/%s", f.getName());
+
+                    try {
+                        delClient.deleteMethod(deleteMethod,
+                                Collections.emptyMap());
+                    }
+                    catch (InterruptedException | IOException e) {
+                        log.debug("unfriend", e);
+                    }
+                }
+            }
+
+            writer.println("");
         }
     }
 
-    @SuppressWarnings("boxing")
+    @SuppressWarnings({ "boxing", "unused" })
     private void testBanned(final RedditGetMethod client,
             final Gson gson) throws IOException, InterruptedException {
         final var userNmae = "ECUlightBBC";
@@ -128,16 +176,16 @@ public class TestGetMethodFriends {
 
         log.debug("isSuspended: {}", fabout.getData().getIsSuspended());
 
-        final var overviewMethod = String.format("user/%s/overview",
+        final var submittedMethod = String.format("user/%s/submitted",
                 userNmae);
 
-        final var overviewResponse = client
-                .getMethod(overviewMethod, Collections.emptyMap());
+        final var submittedResponse = client
+                .getMethod(submittedMethod, Collections.emptyMap());
 
-        log.debug("overview response status: {}",
-                overviewResponse.statusCode());
-        log.debug("overview response body: {}",
-                overviewResponse.body());
+        log.debug("submitted response status: {}",
+                submittedResponse.statusCode());
+        log.debug("submitted response body: {}",
+                submittedResponse.body());
 
     }
 

@@ -14,18 +14,29 @@ public class FriendAbout {
         return this.data;
     }
 
+    @Override
+    public String toString() {
+        return "FriendAbout [kind=" + this.kind + ", data=" + this.data + "]";
+    }
+
     public static class FriendData {
         @SerializedName("is_suspended")
-        private String isSuspended;
+        private boolean isSuspended;
         @SerializedName("total_karma")
         private int totalKarma;
 
-        public String getIsSuspended() {
+        public boolean getIsSuspended() {
             return this.isSuspended;
         }
 
         public int getTotalKarma() {
             return this.totalKarma;
+        }
+
+        @Override
+        public String toString() {
+            return "FriendData [isSuspended=" + this.isSuspended
+                    + ", totalKarma=" + this.totalKarma + "]";
         }
     }
 }

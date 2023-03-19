@@ -1,8 +1,6 @@
 package com.objecteffects.reddit.http;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -15,18 +13,12 @@ public class TestRevokeToken {
     @Test
     public void testRevokeToken()
             throws IOException, InterruptedException {
-        final var client = new RedditOAuth();
 
-        final var response = client.revokeToken();
+        final var response = RedditOAuth.revokeToken();
 
         log.debug("revoke response status: {}",
                 Integer.valueOf(response.statusCode()));
         log.debug("revoke response headers: {}", response.headers());
         log.debug("revoke response body: {}", response.body());
-
-        @SuppressWarnings("unused")
-        final var list = new ArrayList<String>();
-        @SuppressWarnings("unused")
-        final List<String> list2 = new ArrayList<>();
     }
 }

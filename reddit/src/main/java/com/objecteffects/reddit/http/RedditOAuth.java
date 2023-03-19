@@ -2,6 +2,7 @@ package com.objecteffects.reddit.http;
 
 import java.io.IOException;
 import java.net.URI;
+import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.net.http.HttpResponse.BodyHandlers;
@@ -22,9 +23,7 @@ public class RedditOAuth {
     private final static Logger log = LogManager
             .getLogger(RedditOAuth.class);
 
-    private final String authUrl = "https://www.reddit.com";
-
-    public HttpResponse<String> getAuthToken()
+    public static HttpResponse<String> getAuthToken()
             throws IOException, InterruptedException {
         if (Configuration.getOAuthToken() != null) {
             log.debug("auth token already loaded");
@@ -46,17 +45,18 @@ public class RedditOAuth {
 
         final var method = "api/v1/access_token";
 
-        final var fullUrl = String.format("%s/%s", this.authUrl, method);
+        final var fullUrl = String.format("%s/%s", RedditHttpClient.authUrl,
+                method);
 
         log.debug("fullUrl: {}", fullUrl);
 
-        final var form = params.entrySet().stream()
+        final String form = params.entrySet().stream()
                 .map(entry -> entry.getKey() + "=" + entry.getValue())
                 .collect(Collectors.joining("&"));
 
         log.debug("form: {}", form);
 
-        final var request = HttpRequest.newBuilder()
+        final HttpRequest request = HttpRequest.newBuilder()
                 .headers("Content-Type", "application/x-www-form-urlencoded")
                 .headers("User-Agent",
                         "java:com.objecteffects.reddit:v0.0.1 (by /u/lumpynose)")
@@ -68,15 +68,19 @@ public class RedditOAuth {
 
         log.debug("request headers: {}", request.headers());
 
-        final var client = RedditHttpClient.getHttpClient();
+        final HttpClient client = RedditHttpClient.getHttpClient();
 
-        final var response = client.send(request, BodyHandlers.ofString());
+        final HttpResponse<String> response = client.send(request,
+                BodyHandlers.ofString());
 
         log.debug("auth response status: {}",
                 Integer.valueOf(response.statusCode()));
 
         if (response.statusCode() != 200) {
-            return null;
+            Configuration.setOAuthToken(null);
+
+            throw new IllegalStateException(
+                    "status code: " + response.statusCode());
         }
 
         log.debug("auth response headers: {}", response.headers());
@@ -106,7 +110,7 @@ public class RedditOAuth {
         return response;
     }
 
-    public HttpResponse<String> revokeToken()
+    public static HttpResponse<String> revokeToken()
             throws IOException, InterruptedException {
         final Map<String, String> params = new HashMap<>();
 
@@ -122,18 +126,19 @@ public class RedditOAuth {
         final var username = Configuration.getClientId();
         final var password = Configuration.getSecret();
 
-        final var form = params.entrySet().stream()
+        final String form = params.entrySet().stream()
                 .map(entry -> entry.getKey() + "=" + entry.getValue())
                 .collect(Collectors.joining("&"));
 
         log.debug("form: {}", form);
 
         final var method = "api/v1/revoke_token";
-        final var fullUrl = String.format("%s/%s", this.authUrl, method);
+        final var fullUrl = String.format("%s/%s", RedditHttpClient.authUrl,
+                method);
 
         log.debug("fullUrl: " + fullUrl);
 
-        final var request = HttpRequest.newBuilder()
+        final HttpRequest request = HttpRequest.newBuilder()
                 .headers("Content-Type", "application/x-www-form-urlencoded")
                 .headers("User-Agent",
                         "java:com.objecteffects.reddit:v0.0.1 (by /u/lumpynose)")
@@ -145,14 +150,22 @@ public class RedditOAuth {
 
         log.debug("headers: {}", request.headers());
 
-        final var client = RedditHttpClient.getHttpClient();
+        final HttpClient client = RedditHttpClient.getHttpClient();
 
-        final var response = client.send(request, BodyHandlers.ofString());
+        final HttpResponse<String> response = client.send(request,
+                BodyHandlers.ofString());
 
         log.debug("revoke response status: {}",
                 Integer.valueOf(response.statusCode()));
         log.debug("revoke response headers: {}", response.headers());
         log.debug("revoke response body: {}", response.body());
+
+        if (response.statusCode() != 200) {
+            Configuration.setOAuthToken(null);
+
+            throw new IllegalStateException(
+                    "status code: " + response.statusCode());
+        }
 
         Configuration.setOAuthToken(null);
 

@@ -15,9 +15,7 @@ public class TestAuthToken {
     @Test
     public void testGetAuthToken() throws IOException, InterruptedException {
 
-        final var client = new RedditOAuth();
-
-        client.getAuthToken();
+        RedditOAuth.getAuthToken();
 
         final var access_token = Configuration.getOAuthToken();
 

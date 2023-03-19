@@ -2,6 +2,7 @@ package com.objecteffects.reddit.http;
 
 import java.io.IOException;
 import java.net.URI;
+import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.net.http.HttpResponse.BodyHandlers;
@@ -18,59 +19,97 @@ public class RedditGetMethod {
     private final static Logger log = LogManager
             .getLogger(RedditGetMethod.class);
 
-    private final String methodUrl = "https://oauth.reddit.com";
-
-    @SuppressWarnings("boxing")
     public HttpResponse<String> getMethod(final String method,
             final Map<String, String> params)
-            throws IOException, InterruptedException {
-        String fullUrl;
+            throws InterruptedException, IOException {
+
+        final HttpRequest.Builder getBuilder = HttpRequest.newBuilder().GET();
+
+        return RedditHttpClient.clientSend(getBuilder, method, params);
+    }
+
+    @SuppressWarnings("unused")
+    private HttpResponse<String> getMethodOld(final String method,
+            final Map<String, String> params)
+            throws InterruptedException, IOException {
+        final String fullUrl;
+
+        log.debug("method: {}", method);
 
         if (!params.isEmpty()) {
-            final var form = params.entrySet().stream()
+            final String form = params.entrySet().stream()
                     .map(entry -> entry.getKey() + "=" + entry.getValue())
                     .collect(Collectors.joining("&"));
 
             log.debug("form: {}, {}", form, form.length());
 
-            fullUrl = String.format("%s/%s?%s", this.methodUrl,
+            fullUrl = String.format("%s/%s?%s", RedditHttpClient.methodUrl,
                     method, form);
         }
         else {
-            fullUrl = String.format("%s/%s", this.methodUrl,
+            fullUrl = String.format("%s/%s", RedditHttpClient.methodUrl,
                     method);
         }
 
-//        log.debug("fullUrl: " + fullUrl);
-
-        final var redditOAuth = new RedditOAuth();
+        log.debug("fullUrl: {}", fullUrl);
 
         // loads the OAuth token for Configuration.getOAuthToken().
-        redditOAuth.getAuthToken();
+        RedditOAuth.getAuthToken();
 
-        final var request = HttpRequest.newBuilder()
+        final HttpRequest request = HttpRequest.newBuilder()
+                .GET()
                 .headers("User-Agent",
                         "java:com.objecteffects.reddit:v0.0.1 (by /u/lumpynose)")
                 .header("Authorization",
                         "bearer " + Configuration.getOAuthToken())
-                .GET()
                 .uri(URI.create(fullUrl))
                 .timeout(Duration.ofSeconds(15))
                 .build();
 
 //        log.debug("headers: {}", request.headers());
 
-        final var client = RedditHttpClient.getHttpClient();
+        final HttpClient client = RedditHttpClient.getHttpClient();
 
-        final var response = client.send(request,
-                BodyHandlers.ofString());
+        HttpResponse<String> response = null;
 
-        log.debug("response status: {}",
-                Integer.valueOf(response.statusCode()));
-        log.debug("response headers: {}", response.headers());
-        log.debug("response body: {}", response.body());
+        try {
+            response = client.send(request, BodyHandlers.ofString());
+
+            log.debug("response status: {}",
+                    Integer.valueOf(response.statusCode()));
+            log.debug("response headers: {}", response.headers());
+            log.debug("response body: {}", response.body());
+        }
+        catch (IOException | InterruptedException e) {
+            log.debug("exception: {}", e);
+        }
+
+        if (response == null || response.statusCode() != 200) {
+            for (int i = 1; i < 11; i++) {
+                Thread.sleep(i * 1500);
+
+                try {
+                    response = client.send(request, BodyHandlers.ofString());
+
+                    log.debug("response status: {}",
+                            Integer.valueOf(response.statusCode()));
+                    log.debug("response headers: {}", response.headers());
+                    log.debug("response body: {}", response.body());
+
+                    if (response.statusCode() == 200) {
+                        break;
+                    }
+                }
+                catch (IOException | InterruptedException e) {
+                    log.debug("exception: {}", e);
+                }
+            }
+        }
+
+        if (response == null || response.statusCode() != 200) {
+            return null;
+        }
 
         return response;
     }
-
 }

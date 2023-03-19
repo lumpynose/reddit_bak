@@ -17,8 +17,6 @@ public class TestGetMethodMe {
 
         client.getMethod("api/v1/me", Collections.emptyMap());
 
-        final var redditOAuth = new RedditOAuth();
-
-        redditOAuth.revokeToken();
+        RedditOAuth.revokeToken();
     }
 }
