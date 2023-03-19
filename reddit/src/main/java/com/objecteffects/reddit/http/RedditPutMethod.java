@@ -26,10 +26,10 @@ public class RedditPutMethod {
 
         log.debug("json: {}", json);
 
-        final HttpRequest.Builder deleteBuilder = HttpRequest.newBuilder()
+        final HttpRequest.Builder putBuilder = HttpRequest.newBuilder()
                 .PUT(BodyPublishers.ofString(json));
 
-        return RedditHttpClient.clientSend(deleteBuilder, method,
+        return RedditHttpClient.clientSend(putBuilder, method,
                 Collections.emptyMap());
     }
 }

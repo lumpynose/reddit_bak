@@ -24,6 +24,7 @@ public class TestGetMethodFriends {
     public void testGetMethod() throws IOException, InterruptedException {
         final var client = new RedditGetMethod();
 
+        // doesn't work (ignored) with friends
         final var params = Map.of("limit", "15");
 
         final var methodResponse = client
