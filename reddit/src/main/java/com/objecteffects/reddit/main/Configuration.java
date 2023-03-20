@@ -17,6 +17,7 @@ public class Configuration {
     private static String clientId = null;
     private static String secret = null;
     private static String oauthToken = null;
+    private static String hide = null;
 
     public static void loadConfiguration() {
         final var configs = new Configurations();
@@ -31,6 +32,8 @@ public class Configuration {
 
             clientId = config.getString("client_id");
             secret = config.getString("secret");
+
+            hide = config.getString("hide");
         }
         catch (final ConfigurationException e) {
             log.error("configuration exception: ", e);
@@ -39,6 +42,7 @@ public class Configuration {
             password = "";
             clientId = "";
             secret = "";
+            hide = "";
         }
     }
 
@@ -82,4 +86,11 @@ public class Configuration {
         oauthToken = _oauthToken;
     }
 
+    public static String getHide() {
+        if (hide == null) {
+            loadConfiguration();
+        }
+
+        return hide;
+    }
 }

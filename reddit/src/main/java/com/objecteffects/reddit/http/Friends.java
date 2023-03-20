@@ -20,13 +20,13 @@ public class Friends {
     public class FriendsData {
         private List<Friend> children;
 
+        public List<Friend> getFriendsList() {
+            return this.children;
+        }
+
         @Override
         public String toString() {
             return "FriendsData [friendsList=" + this.children + "]";
-        }
-
-        public List<Friend> getFriendsList() {
-            return this.children;
         }
     }
 
