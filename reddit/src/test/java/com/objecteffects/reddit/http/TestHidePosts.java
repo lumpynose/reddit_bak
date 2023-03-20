@@ -1,6 +1,7 @@
 package com.objecteffects.reddit.http;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.logging.log4j.LogManager;
@@ -17,36 +18,47 @@ public class TestHidePosts {
     @Test
     @SuppressWarnings("boxing")
     public void testPostMethod() throws IOException, InterruptedException {
-        final String user = Configuration.getHide();
+        final List<String> users = Configuration.getHide();
+
+        log.debug("configuration: {}", Configuration.dumpConfig());
+
+        if (users.isEmpty()) {
+            return;
+        }
 
         final var getClient = new RedditGetMethod();
 
-        final var submittedMethod = String.format("/user/%s/submitted", user);
+        for (final String user : users) {
+            final var submittedMethod = String.format("/user/%s/submitted",
+                    user);
 
-        final var params = Map.of("limit", "50", "sort", "new", "type",
-                "links");
+            final var params = Map.of("limit", "50", "sort", "new", "type",
+                    "links");
 
-        final var methodResponse = getClient.getMethod(submittedMethod, params);
+            final var methodResponse = getClient.getMethod(submittedMethod,
+                    params);
 
-        final var gson = new Gson();
+            final var gson = new Gson();
 
-        final Posts data = gson.fromJson(methodResponse.body(), Posts.class);
+            final Posts data = gson.fromJson(methodResponse.body(),
+                    Posts.class);
 
-        log.debug("data length: {}",
-                data.getData().getChildren().size());
+            log.debug("data length: {}", data.getData().getChildren().size());
 
-        final var postClient = new RedditPostMethod();
+            final var postClient = new RedditPostMethod();
 
-        final var hideMethod = String.format("/api/hide", user);
+            final var hideMethod = String.format("/api/hide", user);
 
-        for (final Posts.Post pd : data.getData().getChildren()) {
-            log.debug("name: {}", pd.getPostData());
+            for (final Posts.Post pd : data.getData().getChildren()) {
+                log.debug("post: {}", pd.getPostData());
 
-            final var param = Map.of("id", pd.getPostData().getName());
+                final var param = Map.of("id", pd.getPostData().getName());
 
-            final var hideResponse = postClient.postMethod(hideMethod, param);
+                final var hideResponse = postClient.postMethod(hideMethod,
+                        param);
 
-            log.debug("response: {}", hideResponse.statusCode());
+                log.debug("response: {}", hideResponse.statusCode());
+            }
         }
     }
 }
