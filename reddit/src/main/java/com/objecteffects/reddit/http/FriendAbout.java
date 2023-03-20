@@ -2,6 +2,9 @@ package com.objecteffects.reddit.http;
 
 import com.google.gson.annotations.SerializedName;
 
+/*
+ *
+ */
 public class FriendAbout {
     private String kind;
     private FriendData data;
