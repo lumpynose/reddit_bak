@@ -63,7 +63,7 @@ public class RedditOAuth {
                 .header("Authorization", basicAuth(username, password))
                 .POST(HttpRequest.BodyPublishers.ofString(form))
                 .uri(URI.create(fullUrl))
-                .timeout(Duration.ofSeconds(15))
+                .timeout(Duration.ofSeconds(RedditHttpClient.timeoutSeconds))
                 .build();
 
         log.debug("request headers: {}", request.headers());
@@ -145,7 +145,7 @@ public class RedditOAuth {
                 .header("Authorization", basicAuth(username, password))
                 .POST(HttpRequest.BodyPublishers.ofString(form))
                 .uri(URI.create(fullUrl))
-                .timeout(Duration.ofSeconds(15))
+                .timeout(Duration.ofSeconds(RedditHttpClient.timeoutSeconds))
                 .build();
 
         log.debug("headers: {}", request.headers());

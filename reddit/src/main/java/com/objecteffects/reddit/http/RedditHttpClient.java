@@ -24,13 +24,14 @@ public class RedditHttpClient {
             .getLogger(RedditHttpClient.class);
 
     private static final HttpClient client = HttpClient.newBuilder()
-            .connectTimeout(Duration.ofSeconds(15))
+            .connectTimeout(Duration.ofSeconds(RedditHttpClient.timeoutSeconds))
             .version(Version.HTTP_2)
             .followRedirects(Redirect.NORMAL)
             .build();
 
     final static String authUrl = "https://www.reddit.com";
     final static String methodUrl = "https://oauth.reddit.com";
+    final static int timeoutSeconds = 15;
 
     @SuppressWarnings("boxing")
     final static List<Integer> okCodes = Arrays.asList(200, 201, 202, 203, 204);
@@ -73,7 +74,7 @@ public class RedditHttpClient {
                 .header("Authorization",
                         "bearer " + Configuration.getOAuthToken())
                 .uri(URI.create(fullUrl))
-                .timeout(Duration.ofSeconds(15))
+                .timeout(Duration.ofSeconds(RedditHttpClient.timeoutSeconds))
                 .build();
 
 //        log.debug("headers: {}", request.headers());

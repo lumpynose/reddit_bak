@@ -32,7 +32,7 @@ public class TestHidePosts {
             final var submittedMethod = String.format("/user/%s/submitted",
                     user);
 
-            final var params = Map.of("limit", "100", "sort", "new", "type",
+            final var params = Map.of("limit", "300", "sort", "new", "type",
                     "links");
 
             final var methodResponse = getClient.getMethod(submittedMethod,
