@@ -84,21 +84,21 @@ public class RedditGetMethod {
             log.debug("exception: {}", e);
         }
 
-        if (response == null || response.statusCode() != 200) {
+        if (response == null) {
             for (int i = 1; i < 11; i++) {
                 Thread.sleep(i * 1500);
 
                 try {
                     response = client.send(request, BodyHandlers.ofString());
 
+                    if (response == null) {
+                        break;
+                    }
+
                     log.debug("response status: {}",
                             Integer.valueOf(response.statusCode()));
                     log.debug("response headers: {}", response.headers());
                     log.debug("response body: {}", response.body());
-
-                    if (response.statusCode() == 200) {
-                        break;
-                    }
                 }
                 catch (IOException | InterruptedException e) {
                     log.debug("exception: {}", e);

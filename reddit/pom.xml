@@ -8,11 +8,13 @@
     <version>0.0.1-SNAPSHOT</version>
     <name>reddit</name>
     <description>reddit stuff</description>
+    
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
     </properties>
+    
     <build>
         <finalName>reddit</finalName>
         <resources>
@@ -27,6 +29,7 @@
                 <filtering>true</filtering>
             </testResource>
         </testResources>
+        
         <pluginManagement>
             <plugins>
                 <plugin>
@@ -46,36 +49,8 @@
                 </plugin>
             </plugins>
         </pluginManagement>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-assembly-plugin</artifactId>
-                <configuration>
-                    <descriptorRefs>
-                        <descriptorRef>jar-with-dependencies</descriptorRef>
-                    </descriptorRefs>
-                    <archive>
-                        <manifest>
-                            <mainClass>com.objecteffects.temperature.main.MainPaho</mainClass>
-                        </manifest>
-                        <manifestEntries>
-                            <Class-Path>/</Class-Path>
-                            <addClasspath>.</addClasspath>
-                        </manifestEntries>
-                    </archive>
-                </configuration>
-                <executions>
-                    <execution>
-                        <id>create-archive</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>single</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-        </plugins>
     </build>
+    
     <dependencies>
         <dependency>
             <!-- https://mvnrepository.com/artifact/com.google.code.gson/gson -->

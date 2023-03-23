@@ -13,6 +13,7 @@ public class TestRevokeToken {
     @Test
     public void testRevokeToken()
             throws IOException, InterruptedException {
+        RedditOAuth.getAuthToken();
 
         final var response = RedditOAuth.revokeToken();
 

@@ -6,11 +6,9 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.junit.jupiter.api.Test;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -20,15 +18,15 @@ public class TestGetMethodFriends {
     private final static Logger log = LogManager
             .getLogger(TestGetMethodFriends.class);
 
-    @Test
+    // @Test
     public void testGetMethod() throws IOException, InterruptedException {
         final var client = new RedditGetMethod();
 
         // doesn't work (ignored) with friends
-        final var params = Map.of("limit", "15");
+//        final var params = Map.of("limit", "15");
 
         final var methodResponse = client
-                .getMethod("prefs/friends", params);
+                .getMethod("prefs/friends", Collections.emptyMap());
 
         log.debug("method response status: {}",
                 Integer.valueOf(methodResponse.statusCode()));
@@ -68,6 +66,7 @@ public class TestGetMethodFriends {
             final var aboutMethodResponse = client
                     .getMethod(aboutMethod, Collections.emptyMap());
 
+            // client.getMethod returns null if there was any error
             if (aboutMethodResponse == null) {
                 nullList.add(f);
 

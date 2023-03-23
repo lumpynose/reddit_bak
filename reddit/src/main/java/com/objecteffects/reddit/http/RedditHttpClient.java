@@ -93,6 +93,10 @@ public class RedditHttpClient {
         }
         catch (IOException | InterruptedException e) {
             log.debug("exception: {}", e);
+
+            // fall through to retries below
+
+            response = null;
         }
 
         if (response == null || !okCodes.contains(response.statusCode())) {
@@ -116,6 +120,10 @@ public class RedditHttpClient {
                 }
                 catch (IOException | InterruptedException e) {
                     log.debug("exception: {}", e);
+
+                    // keep retrying
+
+                    response = null;
                 }
             }
         }
