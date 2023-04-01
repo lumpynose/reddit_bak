@@ -9,6 +9,7 @@ import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.Test;
 
 import com.google.gson.Gson;
+import com.objecteffects.reddit.http.data.Posts;
 import com.objecteffects.reddit.main.Configuration;
 
 public class TestHidePosts {
@@ -47,7 +48,7 @@ public class TestHidePosts {
 
             final var postClient = new RedditPostMethod();
 
-            final var hideMethod = String.format("/api/hide", user);
+            final var hideMethod = String.format("/api/hide");
 
             for (final Posts.Post pd : data.getData().getChildren()) {
                 log.debug("post: {}", pd.getPostData());

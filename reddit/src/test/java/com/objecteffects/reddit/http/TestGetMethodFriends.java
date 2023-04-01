@@ -12,7 +12,9 @@ import org.apache.logging.log4j.Logger;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import com.objecteffects.reddit.http.Friends.Friend;
+import com.objecteffects.reddit.http.data.FriendAbout;
+import com.objecteffects.reddit.http.data.Friends;
+import com.objecteffects.reddit.http.data.Friends.Friend;
 
 public class TestGetMethodFriends {
     private final static Logger log = LogManager

@@ -1,4 +1,4 @@
-package com.objecteffects.reddit.http;
+package com.objecteffects.reddit.http.data;
 
 import com.google.gson.annotations.SerializedName;
 
@@ -22,7 +22,7 @@ public class FriendAbout {
         return "FriendAbout [kind=" + this.kind + ", data=" + this.data + "]";
     }
 
-    public static class FriendData {
+    static public class FriendData {
         @SerializedName("is_suspended")
         private boolean isSuspended;
         @SerializedName("total_karma")

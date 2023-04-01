@@ -28,7 +28,7 @@ public class RedditGetMethod {
         return RedditHttpClient.clientSend(getBuilder, method, params);
     }
 
-    @SuppressWarnings("unused")
+    @SuppressWarnings({ "unused", "boxing" })
     private HttpResponse<String> getMethodOld(final String method,
             final Map<String, String> params)
             throws InterruptedException, IOException {
@@ -37,17 +37,17 @@ public class RedditGetMethod {
         log.debug("method: {}", method);
 
         if (!params.isEmpty()) {
-            final String form = params.entrySet().stream()
+            final String formattedParams = params.entrySet().stream()
                     .map(entry -> entry.getKey() + "=" + entry.getValue())
                     .collect(Collectors.joining("&"));
 
-            log.debug("form: {}, {}", form, form.length());
+            log.debug("form: {}, {}", formattedParams, formattedParams.length());
 
-            fullUrl = String.format("%s/%s?%s", RedditHttpClient.methodUrl,
-                    method, form);
+            fullUrl = String.format("%s/%s?%s", RedditHttpClient.METHOD_URL,
+                    method, formattedParams);
         }
         else {
-            fullUrl = String.format("%s/%s", RedditHttpClient.methodUrl,
+            fullUrl = String.format("%s/%s", RedditHttpClient.METHOD_URL,
                     method);
         }
 

@@ -1,4 +1,4 @@
-package com.objecteffects.reddit.http;
+package com.objecteffects.reddit.http.data;
 
 import java.util.List;
 
@@ -14,7 +14,7 @@ public class Posts {
         return this.data;
     }
 
-    public static class ListingData {
+    static public class ListingData {
         private int dist;
         private List<Post> children;
 
@@ -27,7 +27,7 @@ public class Posts {
         }
     }
 
-    public static class Post {
+    static public class Post {
         private String kind;
         private PostData data;
 
@@ -40,7 +40,7 @@ public class Posts {
         }
     }
 
-    public static class PostData {
+    static public class PostData {
         private String name;
         private String thumbnail;
 

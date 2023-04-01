@@ -29,8 +29,26 @@ public class RedditHttpClient {
             .followRedirects(Redirect.NORMAL)
             .build();
 
-    final static String authUrl = "https://www.reddit.com";
-    final static String methodUrl = "https://oauth.reddit.com";
+    final static String AUTH_URL = "https://www.reddit.com";
+    final static String METHOD_URL = "https://oauth.reddit.com";
+
+    // list of friends
+    final static String FRIENDS_METHOD = "prefs/friends";
+    // info about a user
+    final static String ABOUT_METHOD = "user/%s/about";
+    // friend or unfriend a user
+    final static String FRIEND_METHOD = "api/v1/me/friends/%s";
+    // list of posts by a user
+    final static String SUBMITTED_METHOD = "/user/%s/submitted";
+    // hide a post
+    final static String HIDE_METHOD = "/api/hide";
+    // info about me
+    final static String ABOUT_ME_METHOD = "api/v1/me";
+    // revoke OAuth token
+    final static String REVOKE_TOKEN_METHOD = "api/v1/revoke_token";
+    // get OAuth token
+    final static String GET_TOKEN_METHOD = "api/v1/access_token";
+
     final static int timeoutSeconds = 15;
 
     @SuppressWarnings("boxing")
@@ -55,11 +73,11 @@ public class RedditHttpClient {
 
             log.debug("form: {}, {}", form, form.length());
 
-            fullUrl = String.format("%s/%s?%s", RedditHttpClient.methodUrl,
+            fullUrl = String.format("%s/%s?%s", RedditHttpClient.METHOD_URL,
                     method, form);
         }
         else {
-            fullUrl = String.format("%s/%s", RedditHttpClient.methodUrl,
+            fullUrl = String.format("%s/%s", RedditHttpClient.METHOD_URL,
                     method);
         }
 
@@ -96,7 +114,8 @@ public class RedditHttpClient {
 
             // fall through to retries below
 
-            response = null;
+            // response will be null at this point.
+            // response = null;
         }
 
         if (response == null || !okCodes.contains(response.statusCode())) {

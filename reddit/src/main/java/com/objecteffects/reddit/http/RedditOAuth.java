@@ -45,7 +45,7 @@ public class RedditOAuth {
 
         final var method = "api/v1/access_token";
 
-        final var fullUrl = String.format("%s/%s", RedditHttpClient.authUrl,
+        final var fullUrl = String.format("%s/%s", RedditHttpClient.AUTH_URL,
                 method);
 
         log.debug("fullUrl: {}", fullUrl);
@@ -133,7 +133,7 @@ public class RedditOAuth {
         log.debug("form: {}", form);
 
         final var method = "api/v1/revoke_token";
-        final var fullUrl = String.format("%s/%s", RedditHttpClient.authUrl,
+        final var fullUrl = String.format("%s/%s", RedditHttpClient.AUTH_URL,
                 method);
 
         log.debug("fullUrl: " + fullUrl);

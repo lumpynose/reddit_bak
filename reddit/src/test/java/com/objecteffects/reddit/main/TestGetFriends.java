@@ -7,7 +7,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.Test;
 
-import com.objecteffects.reddit.http.Friends.Friend;
+import com.objecteffects.reddit.http.data.Friends.Friend;
 
 public class TestGetFriends {
     private final static Logger log = LogManager
@@ -17,7 +17,7 @@ public class TestGetFriends {
     public void testGetFriends() throws IOException, InterruptedException {
         final GetFriends getFriends = new GetFriends();
 
-        final List<Friend> friends = getFriends.getFriends(false);
+        final List<Friend> friends = getFriends.getFriends(100);
 
         // Collections.sort(friends, Collections.reverseOrder());
 

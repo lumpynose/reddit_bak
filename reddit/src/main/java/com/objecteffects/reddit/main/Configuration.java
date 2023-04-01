@@ -10,6 +10,7 @@ import org.apache.commons.configuration2.builder.FileBasedConfigurationBuilder;
 import org.apache.commons.configuration2.builder.fluent.Parameters;
 import org.apache.commons.configuration2.convert.DefaultListDelimiterHandler;
 import org.apache.commons.configuration2.ex.ConfigurationException;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -26,18 +27,18 @@ public class Configuration {
 
     private final static String configFile = "c:/home/rusty/redditconfig.properties";
 
-    public static void loadConfiguration() {
-        final Parameters params = new Parameters();
+    private final static Parameters params = new Parameters();
 
-        final FileBasedConfigurationBuilder<FileBasedConfiguration> builder = new FileBasedConfigurationBuilder<FileBasedConfiguration>(
-                PropertiesConfiguration.class)
-                .configure(params.properties()
-                        .setFileName(configFile)
-                        .setListDelimiterHandler(
-                                new DefaultListDelimiterHandler(',')));
+    private final static FileBasedConfigurationBuilder<FileBasedConfiguration> builder = new FileBasedConfigurationBuilder<FileBasedConfiguration>(
+            PropertiesConfiguration.class)
+            .configure(params.properties()
+                    .setFileName(configFile)
+                    .setListDelimiterHandler(
+                            new DefaultListDelimiterHandler(',')));
+
+    public static void loadConfiguration() {
         try {
-            final FileBasedConfiguration config = builder
-                    .getConfiguration();
+            final FileBasedConfiguration config = builder.getConfiguration();
 
             username = config.getString("username");
             password = config.getString("password");
@@ -56,31 +57,6 @@ public class Configuration {
             secret = "";
             hide = Collections.emptyList();
         }
-
-//      final var configs = new Configurations();
-//
-//        try {
-//            final PropertiesConfiguration config = configs
-//                    .properties(
-//                            new File(configFile));
-//
-//            username = config.getString("username");
-//            password = config.getString("password");
-//
-//            clientId = config.getString("client_id");
-//            secret = config.getString("secret");
-//
-//            hide = config.getString("hide");
-//        }
-//        catch (final ConfigurationException e) {
-//            log.error("configuration exception: ", e);
-//
-//            username = "";
-//            password = "";
-//            clientId = "";
-//            secret = "";
-//            hide = "";
-//        }
     }
 
     public static String getUsername() {
@@ -132,12 +108,13 @@ public class Configuration {
     }
 
     public static String dumpConfig() {
-        return "Configuration [username=" + username
-                + ", password=" + password
-                + ", clientId=" + clientId
-                + ", secret=" + secret
-                + ", oauthToken=" + oauthToken
-                + ", hide=" + hide
-                + "]";
+        return new ToStringBuilder(Configuration.class)
+                .append(username)
+                .append(password)
+                .append(clientId)
+                .append(secret)
+                .append(oauthToken)
+                .append(hide)
+                .toString();
     }
 }

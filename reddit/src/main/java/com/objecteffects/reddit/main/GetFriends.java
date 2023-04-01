@@ -9,19 +9,39 @@ import org.apache.logging.log4j.Logger;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import com.objecteffects.reddit.http.FriendAbout;
-import com.objecteffects.reddit.http.Friends;
-import com.objecteffects.reddit.http.Friends.Friend;
 import com.objecteffects.reddit.http.RedditGetMethod;
 import com.objecteffects.reddit.http.RedditOAuth;
+import com.objecteffects.reddit.http.data.FriendAbout;
+import com.objecteffects.reddit.http.data.Friends;
+import com.objecteffects.reddit.http.data.Friends.Friend;
 
 public class GetFriends {
     private final static Logger log = LogManager
             .getLogger(GetFriends.class);
-    final Gson gson = new Gson();
+    private final Gson gson = new Gson();
+    private final int defaultCount = 0;
+    private final boolean defaultGetKarma = false;
 
-    @SuppressWarnings("boxing")
+    // gets all friends, no karma
+    public List<Friend> getFriends() throws IOException, InterruptedException {
+        return getFriends(this.defaultCount, this.defaultGetKarma);
+    }
+
+    // gets all friends, with karma
     public List<Friend> getFriends(final boolean getKarma)
+            throws IOException, InterruptedException {
+        return getFriends(this.defaultCount, getKarma);
+    }
+
+    // gets some friends, with karma
+    public List<Friend> getFriends(final int count)
+            throws IOException, InterruptedException {
+        return getFriends(count, true);
+    }
+
+    // gets all or some friends, with or without karma
+    @SuppressWarnings("boxing")
+    public List<Friend> getFriends(final int count, final boolean getKarma)
             throws IOException, InterruptedException {
         final var client = new RedditGetMethod();
 
@@ -47,7 +67,7 @@ public class GetFriends {
         log.debug("friends length: {}", friends.size());
 
         if (getKarma) {
-            decodeAbout(friends);
+            decodeAbout(friends, count);
         }
 
         RedditOAuth.revokeToken();
@@ -55,11 +75,20 @@ public class GetFriends {
         return friends;
     }
 
-    private List<Friend> decodeAbout(final List<Friend> friends)
+    private List<Friend> decodeAbout(final List<Friend> friends,
+            final int count)
             throws IOException, InterruptedException {
         final var client = new RedditGetMethod();
 
-        for (final Friend f : friends) {
+        List<Friend> sublist = friends;
+
+        if (count > 0 && count < friends.size()) {
+            sublist = friends.subList(0, count);
+        }
+
+        for (final Friend f : sublist) {
+            Thread.sleep(1000);
+
             final var aboutMethod = String.format("user/%s/about", f.getName());
 
             final var aboutMethodResponse = client
@@ -78,11 +107,11 @@ public class GetFriends {
                     f.setKarma(0);
                 }
                 else {
+                    log.debug("friend about: {}", fabout);
+
                     f.setKarma(fabout.getData().getTotalKarma());
                 }
             }
-
-            Thread.sleep(1005);
         }
 
         return friends;

@@ -1,4 +1,4 @@
-package com.objecteffects.reddit.http;
+package com.objecteffects.reddit.http.data;
 
 import java.util.List;
 import java.util.Objects;
@@ -17,7 +17,7 @@ public class Friends {
         return this.data;
     }
 
-    public class FriendsData {
+    static public class FriendsData {
         private List<Friend> children;
 
         public List<Friend> getFriendsList() {
@@ -30,7 +30,7 @@ public class Friends {
         }
     }
 
-    public static class Friend implements Comparable<Friend> {
+    static public class Friend implements Comparable<Friend> {
         @SerializedName("rel_id")
         private String relId;
         private float date;
