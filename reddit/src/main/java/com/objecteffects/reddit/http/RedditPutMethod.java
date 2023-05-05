@@ -13,6 +13,7 @@ import org.apache.logging.log4j.Logger;
 import com.google.gson.Gson;
 
 public class RedditPutMethod {
+    @SuppressWarnings("unused")
     private final static Logger log = LogManager
             .getLogger(RedditPutMethod.class);
 

@@ -8,6 +8,7 @@ import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.Test;
 
 public class TestGetMethodMe {
+    @SuppressWarnings("unused")
     private final static Logger log = LogManager
             .getLogger(TestGetMethodMe.class);
 

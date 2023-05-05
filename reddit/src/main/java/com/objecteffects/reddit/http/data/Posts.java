@@ -6,6 +6,9 @@ public class Posts {
     private String kind;
     private ListingData data;
 
+    public Posts() {
+    }
+
     public String getKind() {
         return this.kind;
     }
@@ -43,6 +46,7 @@ public class Posts {
     static public class PostData {
         private String name;
         private String thumbnail;
+        private boolean hidden;
 
         public String getName() {
             return this.name;
@@ -50,6 +54,10 @@ public class Posts {
 
         public String getThumbnail() {
             return this.thumbnail;
+        }
+
+        public boolean isHidden() {
+            return this.hidden;
         }
 
         @Override

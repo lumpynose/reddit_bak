@@ -9,6 +9,9 @@ public class Friends {
     private String kind;
     private FriendsData data;
 
+    public Friends() {
+    }
+
     public String getKind() {
         return this.kind;
     }
