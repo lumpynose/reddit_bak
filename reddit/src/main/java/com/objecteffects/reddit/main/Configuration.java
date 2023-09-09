@@ -25,7 +25,7 @@ public class Configuration {
     private static String oauthToken = null;
     private static List<String> hide = null;
 
-    private final static String configFile = "c:/home/rusty/redditconfig.properties";
+    private final static String configFile = "c:/home/lumpy/redditconfig.properties";
 
     private final static Parameters params = new Parameters();
 
